@@ -4,13 +4,13 @@ class TextType(Enum):
 	LINK = "link"
 	BOLD = "bold"
 	CODE = "code"
-	image = "image"
-	plain = "plain"
+	IMAGE = "image"
+	PLAIN = "plain"
 
 
 
 class TextNode:
-	def __init__(self, text, text_type:TextType, url):
+	def __init__(self, text, text_type:TextType, url=None):
 		self.text = text
 		self.text_type = text_type
 		self.url = url
