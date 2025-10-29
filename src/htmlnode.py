@@ -1,4 +1,6 @@
 
+from textnode import TextNode,TextType
+
 class HTMLNode:
 	def __init__(self, tag=None, value=None, children=None, props=None):
 		self.tag = tag
@@ -67,3 +69,23 @@ class ParentNode(HTMLNode):
 
 
 		return f"<{self.tag}{result_p}>{result_c}</{self.tag}>"
+
+
+
+
+def text_node_to_html_node(TextNode):
+	if TextNode.text_type == TextType.TEXT:
+		return LeafNode(None, TextNode.text)
+	elif TextNode.text_type == TextType.BOLD:
+		return LeafNode("b", TextNode.text)
+	elif TextNode.text_type == TextType.ITALIC:
+		return LeafNode("i", TextNode.text)
+	elif TextNode.text_type == TextType.CODE:
+		return LeafNode("code", TextNode.text)
+	elif TextNode.text_type == TextType.LINK:
+		return LeafNode("a", TextNode.text, {"href": TextNode.url})
+	elif TextNode.text_type == TextType.IMAGE:
+		return LeafNode("img","", {"src": TextType.url, "alt": TextType.text})
+	else:
+		raise Exception("Not valid text type -> text, bold, italic, code, link, image")
+
