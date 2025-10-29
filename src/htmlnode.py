@@ -4,12 +4,7 @@ class HTMLNode:
 		self.tag = tag
 		self.value = value
 		self.children = children
-		self.props = {}
-		if props != None:
-			self.props[tag] = value
-			self.props.update(props)
-		else:
-			self.props[tag] = value
+		self.props = props
 		
 
 	def to_html(self):
@@ -31,3 +26,19 @@ class HTMLNode:
 
 
 
+class LeafNode(HTMLNode):
+	def __init__(self, tag, value, props=None):
+		super().__init__(tag=tag, value=value, children=None, props=props)
+
+	def to_html(self):
+		if self.value == None:
+			raise ValueError("No value passed for the tag")
+		if self.tag == None:
+			return self.value
+		else:
+			if self.props == None:
+				return f"<{self.tag}>{self.value}</{self.tag}>"
+
+			else:
+				result = self.props_to_html()
+				return f"<{self.tag}{result}>{self.value}</{self.tag}>"
