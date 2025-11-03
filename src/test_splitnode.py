@@ -2,7 +2,7 @@ import unittest
 
 # Adjust these imports to your project
 from textnode import TextNode, TextType
-from split_nodes import split_nodes_delimiter  # e.g., where you defined the function
+from split_nodes import split_nodes_delimiter,split_nodes_image, split_nodes_link  # e.g., where you defined the function
 
 
 class TestSplitNodesDelimiter(unittest.TestCase):
@@ -32,32 +32,49 @@ class TestSplitNodesDelimiter(unittest.TestCase):
             ],
         )
 
-    """
-    
-    def test_old_multi(self):
-        old = [TextNode("This has `code` inside.", TextType.TEXT),TextNode("This is **bold** text.", TextType.TEXT), TextNode("This has *italic* text.", TextType.TEXT)]
-        first = split_nodes_delimiter(old, "`", TextType.CODE)
-        second = split_nodes_delimiter(first, "**", TextType.BOLD)
-        last = split_nodes_delimiter(second, "*", TextType.ITALIC)
-        self.assertEqual(
-            last,
+
+
+class TestSplitNodesImages(unittest.TestCase):
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
             [
-                TextNode("This has ", TextType.TEXT),
-                TextNode("code", TextType.CODE),
-                TextNode(" inside.", TextType.TEXT),
-                TextNode("This is ", TextType.TEXT),
-                TextNode("bold", TextType.BOLD),
-                TextNode("text.", TextType.TEXT),
-                TextNode("This has ", TextType.TEXT),
-                TextNode("italic", TextType.ITALIC),
-                TextNode("text.", TextType.TEXT),
-                
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
             ],
+            new_nodes,
         )
     
-    """
 
+
+class TestSplitNodesLinks(unittest.TestCase):
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_link([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a link ", TextType.TEXT),
+                TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
+                TextNode(" and ", TextType.TEXT),
+                TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"),
+            ],
+            new_nodes,
+        )
     
+
+
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
