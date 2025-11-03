@@ -33,6 +33,7 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         )
 
     """
+    
     def test_old_multi(self):
         old = [TextNode("This has `code` inside.", TextType.TEXT),TextNode("This is **bold** text.", TextType.TEXT), TextNode("This has *italic* text.", TextType.TEXT)]
         first = split_nodes_delimiter(old, "`", TextType.CODE)
@@ -53,7 +54,8 @@ class TestSplitNodesDelimiter(unittest.TestCase):
                 
             ],
         )
-"""
+    
+    """
 
     
 
