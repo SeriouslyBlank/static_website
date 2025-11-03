@@ -2,7 +2,7 @@ import unittest
 
 # Adjust these imports to your project
 from textnode import TextNode, TextType
-from split_nodes import split_nodes_delimiter,split_nodes_image, split_nodes_link  # e.g., where you defined the function
+from split_nodes import split_nodes_delimiter,split_nodes_image, split_nodes_link,text_to_textnodes  # e.g., where you defined the function
 
 
 class TestSplitNodesDelimiter(unittest.TestCase):
@@ -72,6 +72,30 @@ class TestSplitNodesLinks(unittest.TestCase):
             new_nodes,
         )
     
+
+
+class TestTexttoTEXTNODES(unittest.TestCase):
+    def test_text_to_nodes(self):
+        test = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+
+        result = text_to_textnodes(test)
+
+        self.assertListEqual(result, 
+            [
+                TextNode("This is ", TextType.TEXT),
+                TextNode("text", TextType.BOLD),
+                TextNode(" with an ", TextType.TEXT),
+                TextNode("italic", TextType.ITALIC),
+                TextNode(" word and a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" and an ", TextType.TEXT),
+                TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", TextType.TEXT),
+                TextNode("link", TextType.LINK, "https://boot.dev"),
+            ]
+
+        )
+
 
 
 
