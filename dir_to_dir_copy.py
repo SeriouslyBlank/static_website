@@ -1,31 +1,44 @@
 import os 
 import shutil
-
-
+from pathlib import Path
 
 
 def source_dir_to_desig_dir():
-	if os.path.exists("public"):
-		shutil.rmtree("public")
-		os.mkdir("public")
-	else:
-		os.mkdir("public")
+    root = Path(".").resolve()
+    public = root / "public"
 
-	static_dir = [f for f in os.listdir(".") if not f.startswith(".")]
-	static_dir.remove("public")
+    # Recreate public/
+    if public.exists():
+        shutil.rmtree(public)
+    public.mkdir(parents=True, exist_ok=True)
 
-	for item in static_dir:
-		if os.path.isdir(item) == True:
-			os.mkdir(f"public/{item}")
-			item_dir = [f for f in os.listdir(item) if not f.startswith("__")]
-			for item_2 in item_dir:
-				if os.path.isdir(f"{item}/{item_2}"):
-					os.mkdir(f"public/{item}/{item_2}")
-				else:
-					shutil.copy(f"{item}/{item_2}", f"public/{item}/")
+    # Ignore function used for all subdirectories
+    def ignore_hidden_and_dunder(dirpath, names):
+        ignored = []
+        for name in names:
+            if name.startswith(".") or name.startswith("__"):
+                ignored.append(name)
+        return set(ignored)
 
-		else:
-			shutil.copy(f"{item}", f"public/")
+    for entry in root.iterdir():
+        # Skip the destination itself and hidden/dunder entries at top-level
+        if entry.name == "public" or entry.name.startswith(".") or entry.name.startswith("__"):
+            continue
+
+        dest = public / entry.name
+        if entry.is_dir():
+            # Recursively copy directory, honoring ignore patterns and preserving metadata
+            shutil.copytree(
+                entry,
+                dest,
+                ignore=ignore_hidden_and_dunder,
+                dirs_exist_ok=True  # requires Python 3.8+
+            )
+        elif entry.is_file():
+            # Copy single file with metadata
+            shutil.copy2(entry, dest)
+        # (Optional) handle symlinks explicitly if you use them:
+        # elif entry.is_symlink(): shutil.copy(entry, dest, follow_symlinks=False)
 
 
 	
